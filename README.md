@@ -35,7 +35,8 @@ Die Konfiguration, in WLAN SSID und Password, erfolgt in `mbed_app.conf`.
         },
         "target_overrides": {
             "*": {
-                "platform.stdio-convert-newlines": true
+                "platform.stdio-convert-newlines": true,
+                "target.printf_lib": "std"
             },
             "DISCO_L475VG_IOT01A": {
                 "target.components_add": ["wifi_ism43362"],
