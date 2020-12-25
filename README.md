@@ -57,6 +57,22 @@ Die Konfiguration, in WLAN SSID und Password, erfolgt in `mbed_app.conf`.
     }
 ```        
 
+Anschliessend kann das WLAN Modem verwendet werden:
+
+    WiFiInterface *wifi = WiFiInterface::get_default_instance();
+    if ( !wifi )
+    {
+        printf("Cannot connect to the network, see serial output\n");
+        return 1;
+    }
+    
+    printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
+    int ret = wifi->connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2);
+    if (ret != 0) {
+        printf("\nConnection error: %d\n", ret);
+        return -1;
+    }
+
 ## Network Time Protocol (NTP)
 ***
 
