@@ -88,14 +88,14 @@ Das Beispiel NTPV2 holt die Zeit vom Internet und setzt die interne Uhr des Boar
     */
     #include "mbed.h"
     #include "NTPClient.h"
-    #include "OLEDDisplay.h" 
+    #include "OLEDDisplay.h"
     
     // UI
     OLEDDisplay oled( MBED_CONF_IOTKIT_OLED_RST, MBED_CONF_IOTKIT_OLED_SDA, MBED_CONF_IOTKIT_OLED_SCL );
     
     DigitalOut led( MBED_CONF_IOTKIT_LED1 );
-     
-    int main() 
+    
+    int main()
     {
         printf("NTP Client example (using WiFi)\r\n");
     
@@ -106,36 +106,47 @@ Das Beispiel NTPV2 holt die Zeit vom Internet und setzt die interne Uhr des Boar
         printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
         // Connect to the network with the default networking interface
         // if you use WiFi: see mbed_app.json for the credentials
-        NetworkInterface *wifi = NetworkInterface::get_default_instance();
-    
+        WiFiInterface *wifi = WiFiInterface::get_default_instance();
         if ( !wifi )
         {
             printf("Cannot connect to the network, see serial output\n");
             return 1;
         }
-       
-        // hole Zeit vom Internet
-        NTPClient ntp( wifi) ;
+    
+        printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
+        int ret = wifi->connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2);
+        if (ret != 0) {
+            printf("\nConnection error: %d\n", ret);
+            return -1;
+        }
+    
+        printf("Getting time from the NTP server");
+        NTPClient ntp(wifi);
+        ntp.set_server("time.google.com", 123);
         time_t timestamp = ntp.get_timestamp();
-        if (timestamp < 0)
-            printf("An error occurred when getting the time. Code: %ld\r\n", timestamp);
-        else
-            printf("Current time is %s\r\n", ctime(&timestamp));
+        if (timestamp < 0) {
+            printf("Failed to get the current time, error: %ld", timestamp);
+            return -1;
+        }
+        printf("Time: %s", ctime(&timestamp));
+    
+        rtc_init();
+        rtc_write(timestamp);
+        time_t rtc_timestamp = rtc_read(); // verify it's been successfully updated
+        printf("RTC reports %s", ctime(&rtc_timestamp));
+    
         wifi->disconnect();
     
-        // set the time
-        set_time( timestamp );
-     
-        while(1) 
+        while(1)
         {
            time_t seconds = time(NULL);
-           oled.clear(); 
+           oled.clear();
            oled.printf( "\rDate & Time: \r\n%s", ctime(&seconds) );
-            
+    
            led=!led;
            thread_sleep_for( 1000 );
         }
-    }                 
+    }
 
 </p></details>
 
