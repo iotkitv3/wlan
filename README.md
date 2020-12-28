@@ -32,27 +32,42 @@ Die Konfiguration, in WLAN SSID und Password, erfolgt in `mbed_app.conf`.
                 "help": "WiFi Password",
                 "value": "\"l3rnk4b3\""
             }
-        },
+        },    
         "target_overrides": {
             "*": {
                 "platform.stdio-convert-newlines": true,
                 "target.printf_lib": "std"
             },
             "DISCO_L475VG_IOT01A": {
+                "target.network-default-interface-type": "WIFI",
                 "target.components_add": ["wifi_ism43362"],
                 "ism43362.provide-default": true
             },
             "K64F": {
+                "target.network-default-interface-type": "WIFI",
                 "esp8266.provide-default" : true,
                 "esp8266.rx": "PTC14",
                 "esp8266.tx": "PTC15",
                 "esp8266.rst": "D9"
             },
             "NUCLEO_F303RE": {
+                "target.network-default-interface-type": "WIFI",
                 "esp8266.provide-default" : true,
                 "esp8266.rx": "D2",
                 "esp8266.tx": "D10"
-            }               
+            },
+            "NUCLEO_F746ZG": {
+                "target.network-default-interface-type": "WIFI",
+                "esp8266.provide-default" : true,
+                "esp8266.rx": "D0",
+                "esp8266.tx": "D1"
+            }, 
+            "NUCLEO_F429ZI": {
+                "target.network-default-interface-type": "WIFI",
+                "esp8266.provide-default" : true,
+                "esp8266.rx": "D0",
+                "esp8266.tx": "D1"
+            }                       
         }
     }
 ```        
